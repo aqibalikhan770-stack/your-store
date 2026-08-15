@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Store | Premium Beard, Hair &amp; Skincare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="announcement" id="announcement"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div id="site-logo"></div>
+      <nav class="nav" id="site-nav"></nav>
+      <div class="header-actions">
+        <div class="search-wrap">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" class="search-input" id="search-input" placeholder="Search products...">
+          <div class="search-results" id="search-results"></div>
+        </div>
+        <a href="/cart.html" class="icon-btn" title="Cart">
+          &#128722;<span class="cart-count" id="cart-count" style="display:none">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-bg">
+      <img class="hero-image" src="https://www.subhansheikh.com/cdn/shop/files/Azadi_Sale_Live.png?v=1786179514&width=1600" alt="Sale banner">
+    </div>
+    <div class="hero-content">
+      <div class="tag" id="hero-tag">Azadi Sale is Live</div>
+      <h1>Premium Care,<br>For Men &amp; Women</h1>
+      <p>Organic beard &amp; hair oils, exquisite perfumes, serums and skincare — up to 40% off.</p>
+      <a href="/collection.html?cat=all" class="btn">Shop Now</a>
+    </div>
+  </section>
+
+  <section class="section" style="padding-bottom:0">
+    <div class="container">
+      <div class="cat-chips" id="home-cats"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Bestsellers</div>
+        <h2>Hot Selling</h2>
+      </div>
+      <div class="product-grid" id="home-bestsellers"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="container">
+      <div class="promo">
+        <div class="promo-media">
+          <img src="https://www.subhansheikh.com/cdn/shop/files/after_before_of_subhan_sheikh_beard_oil.png?v=1777408491&width=900" alt="Beard oil power">
+        </div>
+        <div class="promo-body">
+          <div class="kicker" style="letter-spacing:3px;font-size:.72rem;color:#c9a55c;text-transform:uppercase;font-weight:700">Power of Beard Oil</div>
+          <h2>Transform Your Beard</h2>
+          <p>Our organic beard growth &amp; grooming oil has all the powers to magically transform your beard just the way you want.</p>
+          <a href="/product.html?id=beard-oil" class="btn btn-gold" style="align-self:flex-start">Shop Beard Oil</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">New Arrivals</div>
+        <h2>New Launch</h2>
+      </div>
+      <div class="product-grid" id="home-new"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Promotional Bundles</div>
+        <h2>Save More, Buy Bundles</h2>
+      </div>
+      <div class="product-grid" id="home-bundles"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Our Happy Customers</div>
+        <h2>Let customers speak for us</h2>
+      </div>
+      <div class="testimonial-grid" id="home-reviews"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="trust-strip">
+        <div class="trust-item"><div class="t-ico">&#128666;</div><div class="t-title">Fast Nationwide Delivery</div><div class="t-sub">All across Pakistan</div></div>
+        <div class="trust-item"><div class="t-ico">&#128177;</div><div class="t-title">Cash on Delivery</div><div class="t-sub">Pay when it arrives</div></div>
+        <div class="trust-item"><div class="t-ico">&#10003;</div><div class="t-title">100% Organic</div><div class="t-sub">Natural ingredients</div></div>
+        <div class="trust-item"><div class="t-ico">&#128172;</div><div class="t-title">Support 7 Days</div><div class="t-sub">We're here to help</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/store.js"></script>
+  <script>
+    function renderHome() {
+      const cats = document.getElementById('home-cats');
+      cats.innerHTML = `<a class="cat-chip active" href="/collection.html?cat=all">Shop All</a>` +
+        Store.categories.map((c) => `<a class="cat-chip" href="/collection.html?cat=${c.slug}">${c.name}</a>`).join('');
+
+      const bestsellers = Store.products
+        .filter((p) => p.inStock)
+        .sort((a, b) => b.reviews - a.reviews)
+        .slice(0, 8);
+      document.getElementById('home-bestsellers').innerHTML = bestsellers.map((p) => Store.cardHTML(p)).join('');
+
+      const hot = ['rice-water-face-wash', 'beard-oil', 'uff-unisex', 'sunfence-sunblock', 'complete-self-care-bundle', 'skin-care-bundle-basic'];
+      document.getElementById('home-new').innerHTML = hot
+        .map((id) => Store.getProduct(id))
+        .filter(Boolean)
+        .map((p) => Store.cardHTML(p)).join('');
+
+      const bundles = Store.products
+        .filter((p) => p.category === 'bundles' && p.inStock)
+        .slice(0, 4);
+      document.getElementById('home-bundles').innerHTML = bundles.map((p) => Store.cardHTML(p)).join('');
+
+      (async () => {
+        const res = await fetch('/api/reviews');
+        const reviews = await res.json();
+        const names = { 'uff-unisex': 'UFF.... - UNISEX', 'beard-oil': 'Organic Beard Growth and Grooming Oil', 'whispers-of-love-bundle': 'Whispers of Love Bundle', 'the-last-wish': 'The Last Wish - For Classic Male', 'gardens-of-heaven': 'Gardens Of Heaven - For Women' };
+        document.getElementById('home-reviews').innerHTML = reviews.slice(0, 6).map((r) => `
+          <div class="testimonial">
+            <div class="t-stars">${'&#9733;'.repeat(r.rating)}</div>
+            <p class="t-text">&ldquo;${r.text}&rdquo;</p>
+            <div class="t-name">${r.name}</div>
+            <div class="t-product">${names[r.product] || ''}</div>
+          </div>`).join('');
+      })();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const check = setInterval(() => {
+        if (Store.products.length) { clearInterval(check); renderHome(); }
+      }, 50);
+    });
+  </script>
+</body>
+</html>

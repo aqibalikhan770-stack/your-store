@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Your Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+  <!-- Login -->
+  <div id="login-screen" class="login-screen" style="display:none">
+    <div class="login-box">
+      <h1>Admin Login</h1>
+      <p>Enter your admin password to manage the store.</p>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password">
+      </div>
+      <button class="btn btn-block" id="login-btn">Log in</button>
+      <div class="error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="layout" style="display:none">
+    <aside class="sidebar">
+      <div class="brand">&#128722; Store <span>Admin</span></div>
+      <nav>
+        <a href="#" data-view="products" class="active"><span>&#128230;</span><span>Products</span></a>
+        <a href="#" data-view="orders"><span>&#128203;</span><span>Orders</span></a>
+        <a href="#" data-view="settings"><span>&#9881;</span><span>Settings</span></a>
+      </nav>
+      <button class="logout" id="logout-btn"><span>&#8594;</span><span>Log out</span></button>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <h1 id="page-title">Products</h1>
+        <a class="view-store" href="/" target="_blank">&#8599; View store</a>
+      </div>
+
+      <!-- Stats -->
+      <div class="cards" id="stats-cards"></div>
+
+      <!-- Products view -->
+      <section id="view-products">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>All Products</h2>
+            <button class="btn gold" id="add-product-btn">+ Add Product</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr><th></th><th>Name</th><th>Category</th><th>Price</th><th>Compare At</th><th>Stock</th><th></th></tr>
+              </thead>
+              <tbody id="products-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Orders view -->
+      <section id="view-orders" style="display:none">
+        <div class="panel">
+          <div class="panel-head"><h2>Orders</h2></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr>
+              </thead>
+              <tbody id="orders-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings view -->
+      <section id="view-settings" style="display:none">
+        <div class="panel" style="padding:22px">
+          <div class="panel-head" style="padding:0 0 14px;border-bottom:1px solid var(--line)"><h2>Store Settings</h2></div>
+          <div class="form-grid" style="margin-top:18px">
+            <div class="field"><label>Store Name</label><input id="set-name" placeholder="Your Store"></div>
+            <div class="field"><label>Currency Symbol</label><input id="set-currency" placeholder="Rs."></div>
+            <div class="field full"><label>Announcement Bar Text</label><input id="set-announcement" placeholder="AZADI SALE IS NOW LIVE UP TO 40% OFF"></div>
+            <div class="field"><label>Facebook URL</label><input id="set-fb"></div>
+            <div class="field"><label>Instagram URL</label><input id="set-ig"></div>
+            <div class="field"><label>TikTok URL</label><input id="set-tt"></div>
+          </div>
+          <button class="btn mt" id="save-store-btn">Save Settings</button>
+        </div>
+
+        <div class="panel" style="padding:22px;margin-top:18px">
+          <div class="panel-head" style="padding:0 0 14px;border-bottom:1px solid var(--line)"><h2>Change Admin Password</h2></div>
+          <div class="form-grid" style="margin-top:18px">
+            <div class="field"><label>Current Password</label><input type="password" id="pwd-current"></div>
+            <div class="field"><label>New Password</label><input type="password" id="pwd-next"></div>
+          </div>
+          <button class="btn gold mt" id="save-pwd-btn">Change Password</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Product modal -->
+  <div class="modal-backdrop" id="product-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modal-title">Add Product</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <form id="product-form">
+        <div class="form-grid">
+          <div class="field full"><label>Product Name *</label><input id="f-name" required></div>
+          <div class="field"><label>Category *</label><select id="f-category"></select></div>
+          <div class="field"><label>Badge (optional)</label>
+            <select id="f-badge">
+              <option value="">None</option>
+              <option>Sale</option>
+              <option>New Launch</option>
+              <option>Hot Selling</option>
+            </select>
+          </div>
+          <div class="field"><label>Price (PKR) *</label><input id="f-price" type="number" min="0" required></div>
+          <div class="field"><label>Compare At Price (for discount)</label><input id="f-compare" type="number" min="0"></div>
+          <div class="field"><label>Rating</label><input id="f-rating" type="number" min="0" max="5" step="0.1"></div>
+          <div class="field"><label>Reviews Count</label><input id="f-reviews" type="number" min="0"></div>
+          <div class="field full">
+            <div class="checkbox-row"><input type="checkbox" id="f-stock" checked><label for="f-stock" style="margin:0">In Stock (available to buy)</label></div>
+          </div>
+          <div class="field full"><label>Short Description</label><input id="f-short"></div>
+          <div class="field full"><label>Full Description</label><textarea id="f-desc" rows="3"></textarea></div>
+          <div class="field full">
+            <label>Product Images (upload or paste URL)</label>
+            <div class="img-list" id="img-list"></div>
+            <button type="button" class="btn outline sm mt" id="add-img-btn">+ Add image</button>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn outline" id="modal-cancel">Cancel</button>
+          <button type="submit" class="btn gold">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

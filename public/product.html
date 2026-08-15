@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product | Your Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="announcement" id="announcement"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div id="site-logo"></div>
+      <nav class="nav" id="site-nav"></nav>
+      <div class="header-actions">
+        <div class="search-wrap">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" class="search-input" id="search-input" placeholder="Search products...">
+          <div class="search-results" id="search-results"></div>
+        </div>
+        <a href="/cart.html" class="icon-btn" title="Cart">&#128722;<span class="cart-count" id="cart-count" style="display:none">0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="product-detail"></div>
+  </div>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head"><div class="kicker">You may also like</div><h2>Related Products</h2></div>
+      <div class="product-grid" id="related-grid"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/store.js"></script>
+  <script>
+    let currentProductId = null;
+
+    function setMainImage(src) {
+      document.getElementById('main-img').src = src;
+      document.querySelectorAll('.pd-thumbs img').forEach((t) => {
+        t.classList.toggle('active', t.src === src);
+      });
+    }
+
+    function changeQty(delta) {
+      const input = document.getElementById('qty-input');
+      input.value = Math.max(1, Math.min(99, parseInt(input.value || '1') + delta));
+    }
+
+    function renderDetail(data) {
+      const { product: p, reviews } = data;
+      currentProductId = p.id;
+      document.title = p.name + ' | Your Store';
+
+      const cat = Store.categories.find((c) => c.slug === p.category);
+      const off = p.compareAt > p.price ? Math.round(((p.compareAt - p.price) / p.compareAt) * 100) : 0;
+      const thumbs = p.images.length > 1
+        ? `<div class="pd-thumbs">${p.images.map((img, i) =>
+            `<img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="setMainImage('${img}')">`).join('')}</div>`
+        : '';
+      const stockHtml = p.inStock
+        ? `<button class="btn btn-gold" id="add-btn" onclick="addFromDetail()">Add to cart</button>`
+        : `<button class="btn disabled">Sold out</button>`;
+
+      document.getElementById('product-detail').innerHTML = `
+        <div class="pd-wrap">
+          <div class="pd-gallery">
+            <div class="main-img"><img id="main-img" src="${p.images[0]}" alt="${p.name}" onerror="this.src='https://placehold.co/800x800/e8e3d8/6b6b6b?text=Product'"></div>
+            ${thumbs}
+          </div>
+          <div class="pd-info">
+            <div class="pd-cat">${cat ? cat.name : 'Shop'}</div>
+            <h1>${p.name}</h1>
+            <div class="pd-rating">${Store.ratingHTML(p)}</div>
+            <div class="pd-price">
+              <span class="now">${Store.formatPrice(p.price)}</span>
+              ${p.compareAt > p.price ? `<span class="was">${Store.formatPrice(p.compareAt)}</span><span class="off">-${off}% OFF</span>` : ''}
+            </div>
+            <p class="pd-desc">${p.description}</p>
+            <div class="qty-row">
+              <span class="qty-label">Quantity</span>
+              <div class="qty-control">
+                <button onclick="changeQty(-1)">-</button>
+                <input type="number" id="qty-input" value="1" min="1" max="99">
+                <button onclick="changeQty(1)">+</button>
+              </div>
+            </div>
+            <div class="pd-actions">
+              ${stockHtml}
+              <a href="/cart.html" class="btn btn-outline">View cart</a>
+            </div>
+            <ul class="pd-meta">
+              <li>&#128666; Fast nationwide delivery</li>
+              <li>&#128177; Cash on Delivery available</li>
+              <li>&#128722; Secure checkout</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pd-tabs">
+          <div class="tabs">
+            <button class="tab active" data-tab="desc" onclick="showTab('desc')">Description</button>
+            <button class="tab" data-tab="reviews" onclick="showTab('reviews')">Reviews (${reviews.length})</button>
+          </div>
+          <div class="tab-panel" id="panel-desc">
+            <p style="color:#444">${p.short} ${p.description}</p>
+          </div>
+          <div class="tab-panel" id="panel-reviews" style="display:none">
+            ${reviews.length ? reviews.map((r) => `
+              <div class="review-item">
+                <div class="t-stars" style="color:#e8a020">${'&#9733;'.repeat(r.rating)}</div>
+                <div style="font-weight:700;font-size:.88rem">${r.name}</div>
+                <div style="font-size:.75rem;color:var(--muted)">${r.date}</div>
+                <p class="r-text">${r.text}</p>
+              </div>`).join('') : '<p style="color:var(--muted)">No reviews yet. Be the first!</p>'}
+          </div>
+        </div>`;
+
+      renderRelated(p);
+    }
+
+    function showTab(name) {
+      document.querySelectorAll('.pd-tabs .tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
+      document.getElementById('panel-desc').style.display = name === 'desc' ? 'block' : 'none';
+      document.getElementById('panel-reviews').style.display = name === 'reviews' ? 'block' : 'none';
+    }
+
+    function addFromDetail() {
+      const qty = parseInt(document.getElementById('qty-input').value) || 1;
+      Store.addToCart(currentProductId, qty);
+    }
+
+    function renderRelated(p) {
+      const related = Store.products
+        .filter((x) => x.category === p.category && x.id !== p.id)
+        .slice(0, 4);
+      document.getElementById('related-grid').innerHTML = related.length
+        ? related.map((x) => Store.cardHTML(x)).join('')
+        : Store.products.slice(0, 4).map((x) => Store.cardHTML(x)).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const check = setInterval(() => {
+        if (!Store.products.length) return;
+        clearInterval(check);
+        const id = new URLSearchParams(location.search).get('id');
+        if (!id) { document.getElementById('product-detail').innerHTML = '<p style="padding:40px 0">Product not found.</p>'; return; }
+        Store.getProductFull(id).then((data) => {
+          if (data.error) {
+            document.getElementById('product-detail').innerHTML = `<p style="padding:40px 0">${data.error}</p>`;
+            return;
+          }
+          renderDetail(data);
+        });
+      }, 50);
+    });
+  </script>
+</body>
+</html>

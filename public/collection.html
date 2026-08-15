@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop | Your Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="announcement" id="announcement"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div id="site-logo"></div>
+      <nav class="nav" id="site-nav"></nav>
+      <div class="header-actions">
+        <div class="search-wrap">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" class="search-input" id="search-input" placeholder="Search products...">
+          <div class="search-results" id="search-results"></div>
+        </div>
+        <a href="/cart.html" class="icon-btn" title="Cart">&#128722;<span class="cart-count" id="cart-count" style="display:none">0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-head">
+    <div class="crumbs"><a href="/">Home</a> / <span id="crumb-cat">Shop</span></div>
+    <h1 id="page-title">Shop All</h1>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="cat-chips" id="collection-cats"></div>
+      <div class="sort-row">
+        <span class="count" id="product-count"></span>
+        <select id="sort-select">
+          <option value="featured">Sort by: Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+      <div class="product-grid" id="collection-grid"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/store.js"></script>
+  <script>
+    let currentCat = 'all';
+    let currentSort = 'featured';
+
+    function categoryName(slug) {
+      const c = Store.categories.find((x) => x.slug === slug);
+      return c ? c.name : 'Shop All';
+    }
+
+    function renderCats() {
+      document.getElementById('collection-cats').innerHTML =
+        `<a class="cat-chip ${currentCat === 'all' ? 'active' : ''}" href="/collection.html?cat=all">Shop All</a>` +
+        Store.categories.map((c) =>
+          `<a class="cat-chip ${currentCat === c.slug ? 'active' : ''}" href="/collection.html?cat=${c.slug}">${c.name}</a>`
+        ).join('');
+    }
+
+    function renderProducts() {
+      let list = Store.products.filter((p) => currentCat === 'all' || p.category === currentCat);
+      if (currentSort === 'price-asc') list.sort((a, b) => a.price - b.price);
+      else if (currentSort === 'price-desc') list.sort((a, b) => b.price - a.price);
+      else if (currentSort === 'rating') list.sort((a, b) => b.rating - a.rating);
+      document.getElementById('product-count').textContent = list.length + ' products';
+      document.getElementById('collection-grid').innerHTML = list.length
+        ? list.map((p) => Store.cardHTML(p)).join('')
+        : '<p style="grid-column:1/-1;text-align:center;color:var(--muted)">No products in this category yet.</p>';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const check = setInterval(() => {
+        if (!Store.products.length) return;
+        clearInterval(check);
+        const params = new URLSearchParams(location.search);
+        currentCat = params.get('cat') || 'all';
+        document.title = categoryName(currentCat) + ' | Your Store';
+        document.getElementById('page-title').textContent = categoryName(currentCat);
+        document.getElementById('crumb-cat').textContent = categoryName(currentCat);
+        renderCats();
+        renderProducts();
+      }, 50);
+
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderProducts();
+      });
+    });
+  </script>
+</body>
+</html>
