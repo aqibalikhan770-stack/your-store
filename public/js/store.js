@@ -11,10 +11,17 @@ const Store = {
       fetch('/api/store'),
       fetch('/api/products')
     ]);
-    const storeData = await storeRes.json();
-    this.config = storeData.store;
-    this.categories = storeData.categories;
-    this.products = await catRes.json();
+    if (storeRes.ok && catRes.ok) {
+      const storeData = await storeRes.json();
+      this.config = storeData.store;
+      this.categories = storeData.categories;
+      this.products = await catRes.json();
+    } else if (window.STATIC_DATA) {
+      this.config = window.STATIC_DATA.store;
+      this.categories = window.STATIC_DATA.categories;
+      this.products = window.STATIC_DATA.products;
+      this.staticMode = true;
+    }
     this.renderHeader();
     this.renderCartCount();
   },
@@ -29,6 +36,12 @@ const Store = {
 
   async getProductFull(id) {
     if (this.cache[id]) return this.cache[id];
+    if (this.staticMode) {
+      const product = this.getProduct(id);
+      const data = { product, reviews: (window.STATIC_DATA.reviews || []).filter((r) => r.product === id) };
+      this.cache[id] = data;
+      return data;
+    }
     const res = await fetch(`/api/products/${id}`);
     const data = await res.json();
     this.cache[id] = data;
