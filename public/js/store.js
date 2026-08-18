@@ -128,10 +128,58 @@ const Store = {
     }
     const logo = document.getElementById('site-logo');
     if (logo) {
-      logo.innerHTML = `<a href="/" class="logo">${this.config.name}<span class="dot">&nbsp;Store</span></a>`;
+      const t = (this.config.logoText || this.config.name).trim();
+      logo.innerHTML = `<a href="/" class="logo">${t}<span class="dot">&nbsp;Store</span></a>`;
     }
     const ann = document.getElementById('announcement');
     if (ann) ann.textContent = this.config.announcement;
+    const phone = document.getElementById('top-phone');
+    if (phone && this.config.contact) phone.textContent = this.config.contact.phone || '';
+  },
+
+  /* ---------- Hero slider ---------- */
+  renderHero() {
+    const wrap = document.getElementById('hero-slider');
+    if (!wrap) return;
+    const slides = (this.config.hero && this.config.hero.length) ? this.config.hero : [{
+      image: 'https://placehold.co/1920x700/141414/e8e3d8?text=Your+Banner+Here',
+      title: 'Welcome',
+      subtitle: 'Edit this banner from the admin panel',
+      btnText: 'Shop Now',
+      btnLink: '/collection.html?cat=all'
+    }];
+    wrap.innerHTML = slides.map((s, i) => `
+      <div class="slide ${i === 0 ? 'active' : ''}">
+        <img src="${s.image}" alt="${s.title}" onerror="this.src='https://placehold.co/1920x700/141414/e8e3d8?text=Banner'">
+        <div class="slide-content">
+          <h1>${s.title}</h1>
+          <p>${s.subtitle}</p>
+          ${s.btnText ? `<a href="${s.btnLink}" class="btn">${s.btnText}</a>` : ''}
+        </div>
+      </div>`).join('');
+    if (slides.length > 1) {
+      const dots = document.createElement('div');
+      dots.className = 'hero-dots';
+      dots.innerHTML = slides.map((_, i) => `<span class="${i === 0 ? 'active' : ''}" data-i="${i}"></span>`).join('');
+      wrap.parentNode.appendChild(dots);
+      dots.addEventListener('click', (e) => {
+        if (e.target.dataset.i !== undefined) this.goSlide(+e.target.dataset.i);
+      });
+      this._heroTimer = setInterval(() => {
+        const cur = [...wrap.querySelectorAll('.slide')].findIndex((s) => s.classList.contains('active'));
+        this.goSlide((cur + 1) % slides.length);
+      }, 5000);
+    }
+  },
+
+  goSlide(i) {
+    const wrap = document.getElementById('hero-slider');
+    if (!wrap) return;
+    wrap.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('active', idx === i));
+    const dots = document.querySelector('.hero-dots');
+    if (dots) {
+      dots.querySelectorAll('span').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    }
   },
 
   renderCartCountEl() {},
@@ -184,44 +232,44 @@ const Store = {
   renderFooter() {
     const footer = document.getElementById('site-footer');
     if (!footer) return;
+    const c = this.config;
+    const f = c.footer || {};
+    const contact = c.contact || {};
+    const policies = (f.policyLinks && f.policyLinks.length)
+      ? f.policyLinks.map((l) => `<li><a href="${l.url}">${l.text}</a></li>`).join('')
+      : `<li><a href="#">Shipping policy</a></li><li><a href="#">Refund policy</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Terms of service</a></li>`;
     footer.innerHTML = `
       <div class="container">
         <div class="footer-grid">
           <div>
-            <h4>${this.config.name}</h4>
-            <p style="font-size:.85rem;max-width:260px">Premium beard &amp; hair oils, exquisite perfumes and skincare. Made with love.</p>
+            <h4>${c.logoText || c.name}</h4>
+            <p style="font-size:.85rem;max-width:260px">${f.about || ''}</p>
           </div>
           <div>
-            <h4>Shop</h4>
+            <h4>${f.shopTitle || 'Shop'}</h4>
             <ul>
-              ${this.categories.map((c) => `<li><a href="/collection.html?cat=${c.slug}">${c.name}</a></li>`).join('')}
+              ${this.categories.map((cat) => `<li><a href="/collection.html?cat=${cat.slug}">${cat.name}</a></li>`).join('')}
             </ul>
           </div>
           <div>
-            <h4>Policies</h4>
-            <ul>
-              <li><a href="#">Shipping policy</a></li>
-              <li><a href="#">Refund policy</a></li>
-              <li><a href="#">Privacy policy</a></li>
-              <li><a href="#">Terms of service</a></li>
-            </ul>
+            <h4>${f.policyTitle || 'Policies'}</h4>
+            <ul>${policies}</ul>
           </div>
           <div>
-            <h4>Follow us</h4>
+            <h4>${f.contactTitle || 'Need Help?'}</h4>
             <ul>
-              <li><a href="${this.config.social.facebook}" target="_blank">Facebook</a></li>
-              <li><a href="${this.config.social.instagram}" target="_blank">Instagram</a></li>
-              <li><a href="${this.config.social.tiktok}" target="_blank">TikTok</a></li>
+              <li><a href="tel:${contact.phone || ''}">${contact.phone || ''}</a></li>
+              <li><a href="mailto:${contact.email || ''}">${contact.email || ''}</a></li>
+              <li style="color:var(--muted)">${contact.address || ''}</li>
             </ul>
           </div>
         </div>
         <div class="footer-bottom">
-          <span>&copy; ${new Date().getFullYear()}, ${this.config.name}</span>
+          <span>&copy; ${new Date().getFullYear()}, ${c.name}</span>
           <span class="links">
-            <a href="#">Refund policy</a>
-            <a href="#">Privacy policy</a>
-            <a href="#">Terms of service</a>
-            <a href="#">Shipping policy</a>
+            <a href="${c.social.facebook}" target="_blank">Facebook</a>
+            <a href="${c.social.instagram}" target="_blank">Instagram</a>
+            <a href="${c.social.tiktok}" target="_blank">TikTok</a>
             <a href="/admin.html">Admin</a>
           </span>
         </div>

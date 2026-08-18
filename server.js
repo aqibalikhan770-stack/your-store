@@ -232,10 +232,32 @@ app.put('/api/admin/store', requireAdmin, (req, res) => {
   const data = loadData();
   const b = req.body;
   if (b.name !== undefined) data.store.name = String(b.name).trim();
+  if (b.logoText !== undefined) data.store.logoText = String(b.logoText).trim();
   if (b.currency !== undefined) data.store.currency = String(b.currency);
   if (b.announcement !== undefined) data.store.announcement = String(b.announcement);
   if (b.heroTag !== undefined) data.store.heroTag = String(b.heroTag);
+  if (b.hero !== undefined) {
+    data.store.hero = Array.isArray(b.hero)
+      ? b.hero.map((h) => ({
+          image: String(h.image || ''),
+          title: String(h.title || ''),
+          subtitle: String(h.subtitle || ''),
+          btnText: String(h.btnText || ''),
+          btnLink: String(h.btnLink || '/collection.html?cat=all')
+        })).filter((h) => h.image)
+      : data.store.hero;
+  }
+  if (b.contact !== undefined) data.store.contact = { ...data.store.contact, ...b.contact };
   if (b.social !== undefined) data.store.social = { ...data.store.social, ...b.social };
+  if (b.footer !== undefined) {
+    data.store.footer = {
+      ...data.store.footer,
+      ...b.footer,
+      policyLinks: Array.isArray(b.footer.policyLinks)
+        ? b.footer.policyLinks.filter((l) => l && l.text)
+        : data.store.footer.policyLinks
+    };
+  }
   saveData(data);
   res.json(data.store);
 });

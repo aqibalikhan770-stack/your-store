@@ -93,6 +93,10 @@ tr:hover td { background: #fafafa; }
 .img-row input { flex: 1; }
 .img-row .upload-btn { flex-shrink: 0; }
 
+/* Hero slides */
+.hero-slide-row { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 12px; background: #fafafa; }
+.hero-slide-row .img-row img { width: 84px; height: 84px; }
+
 /* Modal */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: flex-start; justify-content: center; z-index: 50; padding: 40px 16px; overflow-y: auto; }
 .modal-backdrop.show { display: flex; }

@@ -14,7 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div id="site-logo"></div>
-      <nav class="nav" id="site-nav"></nav>
+      <nav class="nav nav-main" id="site-nav"></nav>
       <div class="header-actions">
         <div class="search-wrap">
           <span class="search-icon">&#128269;</span>
@@ -58,7 +58,7 @@
     function renderDetail(data) {
       const { product: p, reviews } = data;
       currentProductId = p.id;
-      document.title = p.name + ' | Your Store';
+      document.title = p.name + ' | ' + (Store.config.name || 'Store');
 
       const cat = Store.categories.find((c) => c.slug === p.category);
       const off = p.compareAt > p.price ? Math.round(((p.compareAt - p.price) / p.compareAt) * 100) : 0;

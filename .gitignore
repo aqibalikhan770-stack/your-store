@@ -3,3 +3,7 @@ public/uploads/
 data/orders.json
 *.log
 .DS_Store
+PrankApp/
+album-studio/
+racing-game/
+classes.dex

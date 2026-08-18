@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Store | Premium Beard, Hair &amp; Skincare</title>
+  <title>J. Fashion Store | Premium Fashion &amp; Fragrance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <div class="announcement" id="announcement"></div>
 
   <header class="site-header">
+    <div class="top-strip">
+      <div class="container top-strip-inner">
+        <span class="ts-links">
+          <a href="/collection.html?cat=all">NEW IN</a>
+          <a href="/collection.html?cat=all">BESTSELLERS</a>
+          <a href="/collection.html?cat=all">GIFTING</a>
+        </span>
+        <span class="ts-help">CALL US: <a href="tel:+922137170445" id="top-phone"></a></span>
+      </div>
+    </div>
     <div class="container header-inner">
       <div id="site-logo"></div>
-      <nav class="nav" id="site-nav"></nav>
+      <nav class="nav nav-main" id="site-nav"></nav>
       <div class="header-actions">
         <div class="search-wrap">
           <span class="search-icon">&#128269;</span>
@@ -29,24 +39,20 @@
   </header>
 
   <section class="hero">
-    <div class="hero-bg">
-      <img class="hero-image" src="https://www.subhansheikh.com/cdn/shop/files/Azadi_Sale_Live.png?v=1786179514&width=1600" alt="Sale banner">
-    </div>
-    <div class="hero-content">
-      <div class="tag" id="hero-tag">Azadi Sale is Live</div>
-      <h1>Premium Care,<br>For Men &amp; Women</h1>
-      <p>Organic beard &amp; hair oils, exquisite perfumes, serums and skincare — up to 40% off.</p>
-      <a href="/collection.html?cat=all" class="btn">Shop Now</a>
-    </div>
-  </section>
-
-  <section class="section" style="padding-bottom:0">
-    <div class="container">
-      <div class="cat-chips" id="home-cats"></div>
-    </div>
+    <div class="hero-slider" id="hero-slider"></div>
   </section>
 
   <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">Shop by category</div>
+        <h2>Our Collections</h2>
+      </div>
+      <div class="cat-tiles" id="home-cats"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
     <div class="container">
       <div class="section-head">
         <div class="kicker">Bestsellers</div>
@@ -56,23 +62,23 @@
     </div>
   </section>
 
-  <section class="section" style="padding-top:10px">
+  <section class="section promo-section" style="padding-top:0">
     <div class="container">
       <div class="promo">
         <div class="promo-media">
-          <img src="https://www.subhansheikh.com/cdn/shop/files/after_before_of_subhan_sheikh_beard_oil.png?v=1777408491&width=900" alt="Beard oil power">
+          <img src="https://placehold.co/1200x800/e8e3d8/141414?text=Promo+Banner" alt="Promo">
         </div>
         <div class="promo-body">
-          <div class="kicker" style="letter-spacing:3px;font-size:.72rem;color:#c9a55c;text-transform:uppercase;font-weight:700">Power of Beard Oil</div>
-          <h2>Transform Your Beard</h2>
-          <p>Our organic beard growth &amp; grooming oil has all the powers to magically transform your beard just the way you want.</p>
-          <a href="/product.html?id=beard-oil" class="btn btn-gold" style="align-self:flex-start">Shop Beard Oil</a>
+          <div class="kicker" style="letter-spacing:3px;font-size:.72rem;color:#c9a55c;text-transform:uppercase;font-weight:700">Anniversary Sale</div>
+          <h2>Buy 1 Get 1 Free</h2>
+          <p>Enjoy our limited-time B1G1 offer across the latest collection. Offer valid on a minimum spend.</p>
+          <a href="/collection.html?cat=all" class="btn btn-gold" style="align-self:flex-start">Shop the Sale</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" style="padding-top:0">
     <div class="container">
       <div class="section-head">
         <div class="kicker">New Arrivals</div>
@@ -107,7 +113,7 @@
       <div class="trust-strip">
         <div class="trust-item"><div class="t-ico">&#128666;</div><div class="t-title">Fast Nationwide Delivery</div><div class="t-sub">All across Pakistan</div></div>
         <div class="trust-item"><div class="t-ico">&#128177;</div><div class="t-title">Cash on Delivery</div><div class="t-sub">Pay when it arrives</div></div>
-        <div class="trust-item"><div class="t-ico">&#10003;</div><div class="t-title">100% Organic</div><div class="t-sub">Natural ingredients</div></div>
+        <div class="trust-item"><div class="t-ico">&#10003;</div><div class="t-title">Authentic Quality</div><div class="t-sub">Premium materials</div></div>
         <div class="trust-item"><div class="t-ico">&#128172;</div><div class="t-title">Support 7 Days</div><div class="t-sub">We're here to help</div></div>
       </div>
     </div>
@@ -119,8 +125,14 @@
   <script>
     function renderHome() {
       const cats = document.getElementById('home-cats');
-      cats.innerHTML = `<a class="cat-chip active" href="/collection.html?cat=all">Shop All</a>` +
-        Store.categories.map((c) => `<a class="cat-chip" href="/collection.html?cat=${c.slug}">${c.name}</a>`).join('');
+      cats.innerHTML = Store.categories.map((c, i) => {
+        const img = Store.products.find((p) => p.category === c.slug)?.images[0] ||
+          'https://placehold.co/600x600/e8e3d8/6b6b6b?text=' + encodeURIComponent(c.name);
+        return `<a class="cat-tile" href="/collection.html?cat=${c.slug}">
+          <div class="ct-media"><img src="${img}" alt="${c.name}" loading="lazy"></div>
+          <div class="ct-name">${c.name}</div>
+        </a>`;
+      }).join('');
 
       const bestsellers = Store.products
         .filter((p) => p.inStock)
@@ -142,20 +154,22 @@
       (async () => {
         const res = await fetch('/api/reviews');
         const reviews = await res.json();
-        const names = { 'uff-unisex': 'UFF.... - UNISEX', 'beard-oil': 'Organic Beard Growth and Grooming Oil', 'whispers-of-love-bundle': 'Whispers of Love Bundle', 'the-last-wish': 'The Last Wish - For Classic Male', 'gardens-of-heaven': 'Gardens Of Heaven - For Women' };
         document.getElementById('home-reviews').innerHTML = reviews.slice(0, 6).map((r) => `
           <div class="testimonial">
             <div class="t-stars">${'&#9733;'.repeat(r.rating)}</div>
             <p class="t-text">&ldquo;${r.text}&rdquo;</p>
             <div class="t-name">${r.name}</div>
-            <div class="t-product">${names[r.product] || ''}</div>
           </div>`).join('');
       })();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const check = setInterval(() => {
-        if (Store.products.length) { clearInterval(check); renderHome(); }
+        if (Store.products.length) {
+          clearInterval(check);
+          Store.renderHero();
+          renderHome();
+        }
       }, 50);
     });
   </script>

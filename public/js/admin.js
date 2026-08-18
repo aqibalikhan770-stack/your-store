@@ -35,6 +35,7 @@ const Admin = {
 
     document.getElementById('save-store-btn').addEventListener('click', () => this.saveStore());
     document.getElementById('save-pwd-btn').addEventListener('click', () => this.changePassword());
+    document.getElementById('add-hero-btn').addEventListener('click', () => this.addHeroSlide({}));
 
     document.getElementById('orders-table').addEventListener('change', (e) => {
       if (e.target.classList.contains('status-sel')) this.updateStatus(e.target);
@@ -334,32 +335,138 @@ const Admin = {
   async loadSettings() {
     try {
       const store = (await fetch('/api/store').then((r) => r.json())).store;
-      document.getElementById('set-name').value = store.name;
-      document.getElementById('set-currency').value = store.currency;
-      document.getElementById('set-announcement').value = store.announcement;
-      document.getElementById('set-fb').value = store.social.facebook;
-      document.getElementById('set-ig').value = store.social.instagram;
-      document.getElementById('set-tt').value = store.social.tiktok;
+      document.getElementById('set-name').value = store.name || '';
+      document.getElementById('set-logo').value = store.logoText || '';
+      document.getElementById('set-currency').value = store.currency || '';
+      document.getElementById('set-announcement').value = store.announcement || '';
+      const contact = store.contact || {};
+      document.getElementById('set-phone').value = contact.phone || '';
+      document.getElementById('set-email').value = contact.email || '';
+      document.getElementById('set-address').value = contact.address || '';
+      document.getElementById('set-fb').value = store.social.facebook || '';
+      document.getElementById('set-ig').value = store.social.instagram || '';
+      document.getElementById('set-tt').value = store.social.tiktok || '';
+      const f = store.footer || {};
+      document.getElementById('set-f-about').value = f.about || '';
+      document.getElementById('set-f-shop').value = f.shopTitle || 'Shop';
+      document.getElementById('set-f-policy').value = f.policyTitle || 'Policies';
+      document.getElementById('set-f-policy-links').value = (f.policyLinks || [])
+        .map((l) => `${l.text} | ${l.url}`).join('\n');
+      document.getElementById('set-categories').value = this.categories
+        .map((c) => `${c.slug} | ${c.name}`).join('\n');
+
+      const slides = (store.hero && store.hero.length) ? store.hero : [];
+      document.getElementById('hero-slides').innerHTML = '';
+      if (!slides.length) this.addHeroSlide({});
+      slides.forEach((s) => this.addHeroSlide(s));
     } catch (e) {
       this.toast('Could not load settings', true);
     }
   },
 
+  addHeroSlide(slide) {
+    const wrap = document.createElement('div');
+    wrap.className = 'hero-slide-row';
+    wrap.innerHTML = `
+      <div class="img-row">
+        <img src="${slide.image || ''}" onerror="this.style.visibility='hidden'">
+        <input type="text" class="hs-img" value="${slide.image || ''}" placeholder="Image URL">
+        <button type="button" class="btn outline sm upload-btn">Upload</button>
+        <button type="button" class="btn sm danger outline" onclick="this.closest('.hero-slide-row').remove()">&#10005;</button>
+      </div>
+      <div class="form-grid" style="margin-top:8px">
+        <div class="field"><input class="hs-title" value="${slide.title || ''}" placeholder="Slide title"></div>
+        <div class="field"><input class="hs-sub" value="${slide.subtitle || ''}" placeholder="Subtitle"></div>
+        <div class="field"><input class="hs-btn-text" value="${slide.btnText || ''}" placeholder="Button text (e.g. Shop Now)"></div>
+        <div class="field"><input class="hs-btn-link" value="${slide.btnLink || '/collection.html?cat=all'}" placeholder="Button link"></div>
+      </div>`;
+    wrap.querySelector('.upload-btn').addEventListener('click', (e) => {
+      const row = e.target.closest('.img-row');
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async () => {
+        if (!input.files[0]) return;
+        const fd = new FormData();
+        fd.append('image', input.files[0]);
+        try {
+          const data = await this.api('/upload', { method: 'POST', body: fd });
+          row.querySelector('.hs-img').value = data.url;
+          const img = row.querySelector('img');
+          img.src = data.url;
+          img.style.visibility = 'visible';
+          this.toast('Image uploaded');
+        } catch (err) {
+          this.toast(err.message, true);
+        }
+      };
+      input.click();
+    });
+    wrap.querySelector('.hs-img').addEventListener('input', (e) => {
+      const img = wrap.querySelector('img');
+      img.src = e.target.value;
+      img.style.visibility = e.target.value ? 'visible' : 'hidden';
+    });
+    document.getElementById('hero-slides').appendChild(wrap);
+  },
+
   async saveStore() {
     try {
+      const policyLinks = document.getElementById('set-f-policy-links').value
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [text, ...rest] = line.split('|');
+          return { text: text.trim(), url: (rest.join('|') || '#').trim() };
+        });
+      const hero = [...document.querySelectorAll('#hero-slides .hero-slide-row')]
+        .map((row) => ({
+          image: row.querySelector('.hs-img').value.trim(),
+          title: row.querySelector('.hs-title').value.trim(),
+          subtitle: row.querySelector('.hs-sub').value.trim(),
+          btnText: row.querySelector('.hs-btn-text').value.trim(),
+          btnLink: row.querySelector('.hs-btn-link').value.trim() || '/collection.html?cat=all'
+        }))
+        .filter((s) => s.image);
+      const categories = document.getElementById('set-categories').value
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [slug, ...rest] = line.split('|');
+          return { slug: slug.trim(), name: rest.join('|').trim() };
+        })
+        .filter((c) => c.slug && c.name);
       await this.api('/store', {
         method: 'PUT',
         body: {
           name: document.getElementById('set-name').value,
+          logoText: document.getElementById('set-logo').value,
           currency: document.getElementById('set-currency').value,
           announcement: document.getElementById('set-announcement').value,
+          contact: {
+            phone: document.getElementById('set-phone').value,
+            email: document.getElementById('set-email').value,
+            address: document.getElementById('set-address').value
+          },
+          hero,
           social: {
             facebook: document.getElementById('set-fb').value,
             instagram: document.getElementById('set-ig').value,
             tiktok: document.getElementById('set-tt').value
+          },
+          footer: {
+            about: document.getElementById('set-f-about').value,
+            shopTitle: document.getElementById('set-f-shop').value,
+            policyTitle: document.getElementById('set-f-policy').value,
+            policyLinks
           }
         }
       });
+      if (categories.length) {
+        await this.api('/categories', { method: 'PUT', body: { categories } });
+      }
       this.toast('Store settings saved');
     } catch (err) {
       this.toast(err.message, true);

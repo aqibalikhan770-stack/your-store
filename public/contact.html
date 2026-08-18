@@ -14,7 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div id="site-logo"></div>
-      <nav class="nav" id="site-nav"></nav>
+      <nav class="nav nav-main" id="site-nav"></nav>
       <div class="header-actions">
         <div class="search-wrap">
           <span class="search-icon">&#128269;</span>
@@ -36,13 +36,8 @@
       <div>
         <h2 style="margin-bottom:16px">Get in touch</h2>
         <p style="color:var(--muted);margin-bottom:24px">Have a question about an order or a product? Message us on WhatsApp or through the form and we'll get back to you as soon as possible.</p>
-        <ul class="contact-info">
-          <li><span class="ci-icon">&#128222;</span> <span><strong>WhatsApp / Call</strong><br>+92 3XX XXXXXXX</span></li>
-          <li><span class="ci-icon">&#128231;</span> <span><strong>Email</strong><br>support@yourstore.com</span></li>
-          <li><span class="ci-icon">&#128205;</span> <span><strong>Location</strong><br>Pakistan — nationwide delivery</span></li>
-          <li><span class="ci-icon">&#128337;</span> <span><strong>Hours</strong><br>Mon–Sat, 10am – 8pm</span></li>
-        </ul>
-        <div style="margin-top:20px;display:flex;gap:12px">
+        <ul class="contact-info" id="contact-info"></ul>
+        <div style="margin-top:20px;display:flex;gap:12px" id="contact-social">
           <a href="#" class="btn btn-outline">Facebook</a>
           <a href="#" class="btn btn-outline">Instagram</a>
           <a href="#" class="btn btn-outline">TikTok</a>
@@ -64,6 +59,22 @@
 
   <script src="/js/store.js"></script>
   <script>
+    function renderContact() {
+      const c = Store.config.contact || {};
+      document.getElementById('contact-info').innerHTML = `
+        <li><span class="ci-icon">&#128222;</span> <span><strong>WhatsApp / Call</strong><br>${c.phone || ''}</span></li>
+        <li><span class="ci-icon">&#128231;</span> <span><strong>Email</strong><br>${c.email || ''}</span></li>
+        <li><span class="ci-icon">&#128205;</span> <span><strong>Location</strong><br>${c.address || ''}</span></li>
+        <li><span class="ci-icon">&#128337;</span> <span><strong>Hours</strong><br>Mon&ndash;Sat, 10am &ndash; 8pm</span></li>`;
+      const s = Store.config.social || {};
+      const links = [
+        s.facebook ? `<a href="${s.facebook}" target="_blank" class="btn btn-outline">Facebook</a>` : '',
+        s.instagram ? `<a href="${s.instagram}" target="_blank" class="btn btn-outline">Instagram</a>` : '',
+        s.tiktok ? `<a href="${s.tiktok}" target="_blank" class="btn btn-outline">TikTok</a>` : ''
+      ].join('');
+      document.getElementById('contact-social').innerHTML = links || '<a href="#" class="btn btn-outline">Facebook</a>';
+    }
+
     function sendContact(e) {
       e.preventDefault();
       Store.toast('Thank you! We will get back to you soon.');
@@ -72,6 +83,14 @@
       document.getElementById('ct-subject').value = '';
       document.getElementById('ct-message').value = '';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const check = setInterval(() => {
+        if (!Store.products.length) return;
+        clearInterval(check);
+        renderContact();
+      }, 50);
+    });
   </script>
 </body>
 </html>

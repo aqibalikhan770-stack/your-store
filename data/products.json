@@ -1,12 +1,60 @@
 {
   "store": {
-    "name": "Your Store",
+    "name": "J. Fashion Store",
+    "logoText": "J.",
     "currency": "Rs.",
     "announcement": "AZADI SALE IS NOW LIVE UP TO 40% OFF",
+    "contact": {
+      "phone": "+92 21 371 704 45",
+      "email": "care@yourstore.com",
+      "address": "Gulberg III, Lahore, Pakistan"
+    },
+    "hero": [
+      {
+        "image": "https://placehold.co/1920x700/141414/e8e3d8?text=New+Collection+2026",
+        "title": "New Arrivals 2026",
+        "subtitle": "Explore the latest premium fashion for men & women",
+        "btnText": "Shop Now",
+        "btnLink": "/collection.html?cat=all"
+      },
+      {
+        "image": "https://placehold.co/1920x700/b8873a/ffffff?text=Buy+1+Get+1+Free",
+        "title": "Buy 1 Get 1 Free",
+        "subtitle": "Limited time anniversary sale on selected items",
+        "btnText": "Shop the Sale",
+        "btnLink": "/collection.html?cat=all"
+      }
+    ],
     "social": {
       "facebook": "https://www.facebook.com/",
       "instagram": "https://www.instagram.com/",
       "tiktok": "https://www.tiktok.com/"
+    },
+    "footer": {
+      "about": "Premium fashion, fragrances and beauty essentials. Crafted with love.",
+      "shopTitle": "Shop",
+      "policyTitle": "Policies",
+      "policyLinks": [
+        {
+          "text": "Shipping policy",
+          "url": "#"
+        },
+        {
+          "text": "Refund policy",
+          "url": "#"
+        },
+        {
+          "text": "Privacy policy",
+          "url": "#"
+        },
+        {
+          "text": "Terms of service",
+          "url": "#"
+        }
+      ],
+      "contactTitle": "Need Help?",
+      "newsletterTitle": "Newsletter",
+      "newsletterText": "Subscribe to get special offers and new arrivals"
     }
   },
   "categories": [

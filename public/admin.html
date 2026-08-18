@@ -83,13 +83,44 @@
           <div class="panel-head" style="padding:0 0 14px;border-bottom:1px solid var(--line)"><h2>Store Settings</h2></div>
           <div class="form-grid" style="margin-top:18px">
             <div class="field"><label>Store Name</label><input id="set-name" placeholder="Your Store"></div>
+            <div class="field"><label>Logo Text</label><input id="set-logo" placeholder="J."></div>
             <div class="field"><label>Currency Symbol</label><input id="set-currency" placeholder="Rs."></div>
             <div class="field full"><label>Announcement Bar Text</label><input id="set-announcement" placeholder="AZADI SALE IS NOW LIVE UP TO 40% OFF"></div>
+          </div>
+          <div class="panel-head" style="padding:18px 0 8px;border-bottom:1px solid var(--line)"><h2>Contact Info</h2></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Phone</label><input id="set-phone"></div>
+            <div class="field"><label>Email</label><input id="set-email"></div>
+            <div class="field full"><label>Address</label><input id="set-address"></div>
+          </div>
+          <div class="panel-head" style="padding:18px 0 8px;border-bottom:1px solid var(--line)"><h2>Social Links</h2></div>
+          <div class="form-grid" style="margin-top:14px">
             <div class="field"><label>Facebook URL</label><input id="set-fb"></div>
             <div class="field"><label>Instagram URL</label><input id="set-ig"></div>
             <div class="field"><label>TikTok URL</label><input id="set-tt"></div>
           </div>
+          <div class="panel-head" style="padding:18px 0 8px;border-bottom:1px solid var(--line)"><h2>Footer</h2></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field full"><label>About Text</label><textarea id="set-f-about" rows="2"></textarea></div>
+            <div class="field"><label>Shop Title</label><input id="set-f-shop"></div>
+            <div class="field"><label>Policy Title</label><input id="set-f-policy"></div>
+            <div class="field full"><label>Policy Links (text | url, one per line)</label><textarea id="set-f-policy-links" rows="4"></textarea></div>
+          </div>
+          <div class="panel-head" style="padding:18px 0 8px;border-bottom:1px solid var(--line)"><h2>Categories</h2></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field full"><label>Category Names (slug | name, one per line)</label><textarea id="set-categories" rows="6"></textarea></div>
+          </div>
           <button class="btn mt" id="save-store-btn">Save Settings</button>
+        </div>
+
+        <div class="panel" style="padding:22px;margin-top:18px">
+          <div class="panel-head" style="padding:0 0 14px;border-bottom:1px solid var(--line)"><h2>Hero Banner Slides</h2></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field full"><div class="hint" style="margin-top:0;margin-bottom:10px">Add or edit slides shown on the homepage banner. Upload an image or paste a URL.</div>
+              <div id="hero-slides"></div>
+              <button type="button" class="btn outline sm mt" id="add-hero-btn">+ Add slide</button>
+            </div>
+          </div>
         </div>
 
         <div class="panel" style="padding:22px;margin-top:18px">

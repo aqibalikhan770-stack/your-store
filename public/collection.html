@@ -14,7 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div id="site-logo"></div>
-      <nav class="nav" id="site-nav"></nav>
+      <nav class="nav nav-main" id="site-nav"></nav>
       <div class="header-actions">
         <div class="search-wrap">
           <span class="search-icon">&#128269;</span>
@@ -84,7 +84,7 @@
         clearInterval(check);
         const params = new URLSearchParams(location.search);
         currentCat = params.get('cat') || 'all';
-        document.title = categoryName(currentCat) + ' | Your Store';
+        document.title = categoryName(currentCat) + ' | ' + (Store.config.name || 'Store');
         document.getElementById('page-title').textContent = categoryName(currentCat);
         document.getElementById('crumb-cat').textContent = categoryName(currentCat);
         renderCats();
