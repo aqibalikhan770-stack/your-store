@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: your-store
+    name: leopards-mux-zone
     runtime: node
     plan: free
     autoDeploy: true

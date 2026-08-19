@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0e1a">
+<title>Leopards MUX zone Meeting Room</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐆</text></svg>">
+<link rel="stylesheet" href="/css/meet.css">
+</head>
+<body>
+
+<!-- ============ LOBBY ============ -->
+<div id="lobby" class="screen">
+  <div class="lobby-bg"></div>
+  <div class="lobby-card">
+    <div class="brand">
+      <div class="brand-logo">🐆</div>
+      <div class="brand-name">Leopards <span>MUX</span> zone</div>
+      <div class="brand-sub">Meeting Room</div>
+    </div>
+
+    <div class="lobby-body">
+      <label class="lbl" for="lobby-name">Your name</label>
+      <input id="lobby-name" class="field" type="text" placeholder="e.g. Aqib Ali Khan" maxlength="40" autocomplete="off">
+
+      <label class="lbl" for="lobby-room">Meeting code</label>
+      <div class="room-row">
+        <input id="lobby-room" class="field" type="text" placeholder="Auto generated" maxlength="32" autocomplete="off" spellcheck="false">
+        <button id="btn-random-room" class="icon-btn" type="button" title="Generate new code">🎲</button>
+      </div>
+
+      <button id="lobby-join" class="primary-btn" type="button">
+        <span class="btn-ico">🚀</span> Start / Join Meeting
+      </button>
+      <div class="lobby-note">Unlimited meeting time &bull; HD video &bull; Crystal clear audio</div>
+    </div>
+
+    <div class="lobby-footer">
+      <span>Designed by <b>Aqib Ali Khan</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MEETING ============ -->
+<div id="meeting" class="screen hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-logo small">🐆</div>
+      <div class="topbar-titles">
+        <div class="brand-name small">Leopards <span>MUX</span> zone</div>
+        <div class="topbar-room">Room &bull; <span id="room-code">---</span></div>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <span class="meeting-title">Live Meeting</span>
+      <span class="live-dot"></span>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-unlimited">⏱ Unlimited</span>
+      <span class="timer" id="timer">00:00</span>
+    </div>
+  </header>
+
+  <main class="meet-main">
+    <section id="stage" class="stage"></section>
+
+    <aside id="sidepanel" class="sidepanel hidden">
+      <div class="panel-tabs">
+        <button id="tab-participants" class="panel-tab active" type="button">
+          <span>👥</span> Participants <span id="pcount" class="pcount">0</span>
+        </button>
+        <button id="tab-chat" class="panel-tab" type="button">
+          <span>💬</span> Chat
+        </button>
+      </div>
+
+      <div id="panel-participants" class="panel-body">
+        <div id="participants-list" class="participants-list"></div>
+      </div>
+
+      <div id="panel-chat" class="panel-body hidden">
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" class="chat-input-row">
+          <input id="chat-input" class="chat-input" type="text" placeholder="Send a message..." maxlength="2000" autocomplete="off">
+          <button id="chat-send" class="chat-send" type="submit">Send</button>
+        </form>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="controlbar">
+    <button id="btn-mic" class="ctl" type="button" title="Mute / Unmute microphone">
+      <span class="ctl-ico" id="ico-mic">🎤</span>
+      <span class="ctl-lbl">Mic</span>
+    </button>
+    <button id="btn-cam" class="ctl" type="button" title="Turn camera on / off">
+      <span class="ctl-ico" id="ico-cam">📷</span>
+      <span class="ctl-lbl">Video</span>
+    </button>
+    <button id="btn-screen" class="ctl" type="button" title="Share your screen">
+      <span class="ctl-ico" id="ico-screen">🖥️</span>
+      <span class="ctl-lbl">Share</span>
+    </button>
+    <div class="ctl-divider"></div>
+    <button id="btn-participants" class="ctl" type="button" title="Show participants">
+      <span class="ctl-ico">👥</span>
+      <span class="ctl-lbl">People</span>
+    </button>
+    <button id="btn-chat" class="ctl" type="button" title="Open chat">
+      <span class="ctl-ico">💬</span>
+      <span class="ctl-lbl">Chat</span>
+    </button>
+    <button id="btn-invite" class="ctl" type="button" title="Copy invite link">
+      <span class="ctl-ico">🔗</span>
+      <span class="ctl-lbl">Invite</span>
+    </button>
+    <div class="ctl-spacer"></div>
+    <button id="btn-leave" class="ctl leave" type="button" title="Leave meeting">
+      <span class="ctl-ico">📞</span>
+      <span class="ctl-lbl">Leave</span>
+    </button>
+  </footer>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- ============ KICK MODAL ============ -->
+<div id="modal" class="modal-backdrop hidden">
+  <div class="modal-card">
+    <div class="modal-ico">🚫</div>
+    <h2 class="modal-title">You were removed</h2>
+    <p class="modal-text">The host removed you from this meeting.</p>
+    <button id="modal-btn" class="primary-btn" type="button">Back to Home</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/meet.js"></script>
+</body>
+</html>
